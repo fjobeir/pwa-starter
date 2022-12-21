@@ -34,9 +34,6 @@ ajaxForms.forEach((form) => {
             })
                 .then(response => response.json())
                 .then(json => {
-                    if (submitButton) {
-                        submitButton.disabled = false
-                    }
                     if (json.success) {
                         if (form.getAttribute('data-success-alert') == 'true') {
                             createToast('success', `<div>${json.messages.join('</div><div>')}</div>`)
@@ -47,6 +44,12 @@ ajaxForms.forEach((form) => {
                         formSubmitted(json, formId)
                     } else {
                         createToast('danger', `<div>${json.messages.join('</div><div>')}</div>`)
+                    }
+                })
+                .catch(e => console.log(e))
+                .finally(() => {
+                    if (submitButton) {
+                        submitButton.disabled = false
                     }
                 })
 
@@ -92,8 +95,7 @@ function createToast(type = 'primary', content = '') {
         toastContainer.parentNode.removeChild(toastContainer)
     })
 }
-function signout()
-{
+function signout() {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     window.location.href = '/login.html'

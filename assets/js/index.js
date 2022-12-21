@@ -66,8 +66,11 @@ function fetchPosts(page)
         json.data.data.forEach(post => {
             createPost(post)
         });
-        isFetching = false
         hasMore = currentPage < json.data.last_page
+    }).catch(e => {
+        console.log(e)
+    }).finally(() => {
+        isFetching = false
         loading.style.display = 'none'
     })
 }
