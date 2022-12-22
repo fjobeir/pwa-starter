@@ -13,6 +13,12 @@
     <link rel="stylesheet" href="assets/css/common.css">
     <link rel="stylesheet" href="assets/css/index.css">
     <link rel="manifest" href="manifest.json">
+    <script>
+        if ('serviceWorker' in navigator) {
+            // console.log('This browser supports servie worker', navigator)
+            navigator.serviceWorker.register('service-worker.js')
+        }
+    </script>
 </head>
 
 <body class="protected">
