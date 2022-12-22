@@ -1,7 +1,9 @@
+var CACHE_NAME = 'mycache-3'
+
 self.addEventListener('install', function(event) {
     console.log('Installing Service Worker')
     event.waitUntil(
-        caches.open('mycache').then((cache) => {
+        caches.open(CACHE_NAME).then((cache) => {
             cache.addAll([
                 '/',
                 'offline.html',
@@ -23,8 +25,20 @@ self.addEventListener('install', function(event) {
 
 self.addEventListener('activate', function(event) {
     console.log('Activating Service Worker')
+    event.waitUntil(
+        caches.keys()
+            .then(function (keyList) {
+                return Promise.all(keyList.map(function (key) {
+                    if (key !== CACHE_NAME) {
+                        console.log('[Service Worker] Removing old cache.', key);
+                        return caches.delete(key);
+                    }
+                }));
+            })
+    );
     self.clients.claim()
 })
+
 
 self.addEventListener('fetch', function(event) {
     console.log('Detected a request', event.request)
@@ -32,19 +46,20 @@ self.addEventListener('fetch', function(event) {
         caches.match(event.request).then(function(response) {
             if (response) {
                 // cache first strategy
+                console.log('Found in cache: ', event.request.url)
                 return response
             } else {
                 return fetch(event.request).then((response) => {
                     // fron network (we have internet)
                     //'https://www.ferasjobeir.com/api/posts?page=1'
-                    return caches.open('mycache').then(function(cache) {
+                    return caches.open(CACHE_NAME).then(function(cache) {
                         // adding dynamic cache
-                        cache.put(event.request, response)
+                        cache.put(event.request, response.clone())
                         return response
                     })
                 }).catch((error) => {
                     // failed to load from cache and failed to access the network
-                    return caches.open('mycache').then(cache => {
+                    return caches.open(CACHE_NAME).then(cache => {
                         return cache.match('offline.html')
                     })
                 })

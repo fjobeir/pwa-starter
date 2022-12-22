@@ -45,8 +45,7 @@ function createPost(post, position = 'end')
 document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener('scroll', function() {
         if (!isFetching && hasMore && (window.innerHeight + document.documentElement.scrollTop + 100) > document.documentElement.offsetHeight) {
-            isFetching = true
-            currentPage++
+            
             
             fetchPosts(currentPage)
         }
@@ -55,6 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
 })
 function fetchPosts(page)
 {
+    isFetching = true
     loading.style.display = 'block'
     fetch('https://www.ferasjobeir.com/api/posts?page=' + page, {
         headers: {
@@ -63,6 +63,7 @@ function fetchPosts(page)
     })
     .then(response => response.json())
     .then(json => {
+        currentPage++
         json.data.data.forEach(post => {
             createPost(post)
         });
