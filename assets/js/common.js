@@ -34,6 +34,7 @@ ajaxForms.forEach((form) => {
             })
                 .then(response => response.json())
                 .then(json => {
+                    console.log(json)
                     if (json.success) {
                         if (form.getAttribute('data-success-alert') == 'true') {
                             createToast('success', `<div>${json.messages.join('</div><div>')}</div>`)
